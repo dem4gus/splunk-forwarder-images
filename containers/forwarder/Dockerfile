@@ -9,14 +9,17 @@ COPY --from=builder /go/src/github.com/openshift/splunk-forwarder-images/runner 
 COPY containers/forwarder/bin/systemctl_wrapper.sh /bin/systemctl
 COPY .splunk-version /
 COPY .splunk-version-hash /
+COPY .splunkforwarder.md5 /
 RUN export VERSION=$(cat /.splunk-version) && export VERSION_HASH=$(cat /.splunk-version-hash) && \
     microdnf install -y libsemanage shadow-utils findutils procps wget && \
     microdnf clean all && \
     wget -O /tmp/splunkforwarder.rpm "https://download.splunk.com/products/universalforwarder/releases/${VERSION}/linux/splunkforwarder-${VERSION}-${VERSION_HASH}.x86_64.rpm" && \
+    md5sum -c /.splunkforwarder.md5 && \
     rpm -ivh /tmp/splunkforwarder.rpm && \
     rm -f /tmp/splunkforwarder.rpm && \
     useradd -M splunk && \
-    mkdir -p /host && chown splunk:splunk /host && \
+    mkdir -p /host && \
+    chown splunk:splunk /host && \
     mkdir -p /opt/splunkforwarder/var/{lib,run,spool}/splunk && \
     mkdir -p /opt/splunkforwarder/var/lib/splunk/{authDb,hashDb} && \
     mkdir -p /opt/splunkforwarder/var/run/splunk/appserver/{i18n,modules/static/css} && \
