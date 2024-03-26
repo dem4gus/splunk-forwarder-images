@@ -12,7 +12,7 @@ COPY .splunk-version-hash /
 RUN export VERSION=$(cat /.splunk-version) && export VERSION_HASH=$(cat /.splunk-version-hash) && \
     microdnf install -y libsemanage shadow-utils findutils procps wget && \
     microdnf clean all && \
-    wget -O /tmp/splunkforwarder.rpm "https://download.splunk.com/products/universalforwarder/releases/${VERSION}/linux/splunkforwarder-${VERSION}-${VERSION_HASH}-linux-2.6-x86_64.rpm" && \
+    wget -O /tmp/splunkforwarder.rpm "https://download.splunk.com/products/universalforwarder/releases/${VERSION}/linux/splunkforwarder-${VERSION}-${VERSION_HASH}.x86_64.rpm" && \
     rpm -ivh /tmp/splunkforwarder.rpm && \
     rm -f /tmp/splunkforwarder.rpm && \
     mkdir -p /host && chown splunk:splunk /host && \
