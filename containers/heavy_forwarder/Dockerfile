@@ -1,12 +1,14 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1137
 
-ADD containers/heavy_forwarder/bin/run.sh /
-ADD .splunk-version /
-ADD .splunk-version-hash /
+COPY containers/heavy_forwarder/bin/run.sh /
+COPY .splunk-version /
+COPY .splunk-version-hash /
+COPY .splunk.md5 /
 RUN export VERSION=$(cat /.splunk-version) && export VERSION_HASH=$(cat /.splunk-version-hash) && \
     microdnf install -y libsemanage shadow-utils findutils procps wget && \
     microdnf clean all && \
     wget -O /tmp/splunk.rpm "https://download.splunk.com/products/splunk/releases/${VERSION}/linux/splunk-${VERSION}-${VERSION_HASH}.x86_64.rpm" && \
+    md5sum --check --ignore-missing /.splunk.md5 && \
     rpm -ivh /tmp/splunk.rpm && \
     rm -f /tmp/splunk.rpm && \
     mkdir -p /host && chown splunk:splunk /host && \
