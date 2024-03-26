@@ -1,14 +1,14 @@
 FROM quay.io/app-sre/boilerplate:image-v5.0.0 AS builder
-ADD . /go/src/github.com/openshift/splunk-forwarder-images
+COPY . /go/src/github.com/openshift/splunk-forwarder-images
 WORKDIR /go/src/github.com/openshift/splunk-forwarder-images
 RUN env CGO_ENABLED=1 GOOS=linux go build -ldflags "-extldflags=-static -w -s" -o runner ./
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1137
 
 COPY --from=builder /go/src/github.com/openshift/splunk-forwarder-images/runner /
-ADD containers/forwarder/bin/systemctl_wrapper.sh /bin/systemctl
-ADD .splunk-version /
-ADD .splunk-version-hash /
+COPY containers/forwarder/bin/systemctl_wrapper.sh /bin/systemctl
+COPY .splunk-version /
+COPY .splunk-version-hash /
 RUN export VERSION=$(cat /.splunk-version) && export VERSION_HASH=$(cat /.splunk-version-hash) && \
     microdnf install -y libsemanage shadow-utils findutils procps wget && \
     microdnf clean all && \
