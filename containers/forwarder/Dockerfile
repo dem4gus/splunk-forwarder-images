@@ -15,6 +15,7 @@ RUN export VERSION=$(cat /.splunk-version) && export VERSION_HASH=$(cat /.splunk
     wget -O /tmp/splunkforwarder.rpm "https://download.splunk.com/products/universalforwarder/releases/${VERSION}/linux/splunkforwarder-${VERSION}-${VERSION_HASH}.x86_64.rpm" && \
     rpm -ivh /tmp/splunkforwarder.rpm && \
     rm -f /tmp/splunkforwarder.rpm && \
+    useradd -M splunk && \
     mkdir -p /host && chown splunk:splunk /host && \
     mkdir -p /opt/splunkforwarder/var/{lib,run,spool}/splunk && \
     mkdir -p /opt/splunkforwarder/var/lib/splunk/{authDb,hashDb} && \
